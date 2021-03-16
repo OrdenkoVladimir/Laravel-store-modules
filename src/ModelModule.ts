@@ -1,33 +1,33 @@
-// eslint-disable-next-line import/no-cycle
+// @ts-ignore
 import isEmpty from 'lodash.isempty';
-// eslint-disable-next-line import/no-cycle
-import BaseModule from './BaseModule';
+import { ActionTree, GetterTree, MutationTree } from 'vuex';
+import BaseModule, { ModuleState } from './BaseModule';
 
 export default class ModelModule extends BaseModule {
-    mutations() {
+    mutations(): MutationTree<ModuleState> {
         return {
             ...super.mutations(),
 
-            SET_ID: (state, id) => {
+            SET_ID: (state: ModuleState, id) => {
                 state.endpoint += state.endpoint.endsWith('/') ? id : `/${id}`;
             },
         };
     }
 
-    getters() {
+    getters(): GetterTree<ModuleState, any> {
         return {
             ...super.getters(),
 
-            model: (state) => state.data.data ?? {},
-            isEmpty: (state) => isEmpty(state.data.data ?? {}),
+            model: (state: ModuleState) => state.data.data ?? {},
+            modelExists: (state: ModuleState) => isEmpty(state.data.data),
         };
     }
 
-    actions() {
+    actions(): ActionTree<ModuleState, any> {
         return {
             ...super.actions(),
+
             setId({ commit }, id) {
-                commit('RESET_STATE');
                 commit('SET_ID', id);
             },
         };
