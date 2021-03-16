@@ -1,0 +1,33 @@
+{
+  "name": "laravel-store-modules",
+  "version": "1.0.4",
+  "description": "### Installation ```sh npm i laravel-store-modules ```",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "webpack --mode development --watch",
+    "build": "webpack --mode production"
+  },
+  "files": [
+    "./dist"
+  ],
+  "keywords": [
+    "BaseModule",
+    "ModelModule",
+    "ItemsListModule",
+    "PaginatedItemsListModule"
+  ],
+  "author": "Alexander G",
+  "license": "ISC",
+  "dependencies": {
+    "laravel-request-utils": "^0.3.0",
+    "lodash.isempty": "^4.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
+    "@babel/preset-react": "^7.12.13",
+    "babel-loader": "^8.2.2",
+    "webpack": "^5.26.0",
+    "webpack-cli": "^4.5.0"
+  }
+}
