@@ -1,13 +1,12 @@
 {
   "name": "laravel-store-modules",
-  "version": "1.0.5",
+  "version": "1.0.10",
   "description": "Base Vuex module classes to work with Laravel.",
   "main": "src/index.js",
   "scripts": {
     "build": "tsc",
     "lint": "eslint .",
     "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint"
   },
   "files": [
