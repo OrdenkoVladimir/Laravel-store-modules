@@ -66,12 +66,16 @@ export default class BaseModule {
                     });
             },
 
-            async remove({ state }, url) {
+            async remove({ state }: ActionContext<ModuleState, any>, url) {
                 await request.delete(url, { params: state.params });
             },
 
-            setParams: ({ commit }, params) => {
+            setParams: ({ commit }: ActionContext<ModuleState, any>, params) => {
                 commit('SET_PARAMS', params);
+            },
+
+            clear: ({ commit }: ActionContext<ModuleState, any>) => {
+                commit('RESET_STATE');
             },
         };
     }
