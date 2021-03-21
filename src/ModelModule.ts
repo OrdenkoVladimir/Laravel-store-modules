@@ -19,7 +19,7 @@ export default class ModelModule extends BaseModule {
             ...super.getters(),
 
             model: (state: ModuleState) => state.data.data ?? {},
-            modelExists: (state: ModuleState) => isEmpty(state.data.data),
+            modelExists: (state: ModuleState) => !isEmpty(state.data.data),
         };
     }
 
