@@ -11,6 +11,10 @@ export default class ModelModule extends BaseModule {
             SET_ID: (state: ModuleState, id) => {
                 state.endpoint += state.endpoint.endsWith('/') ? id : `/${id}`;
             },
+
+            SET_MODEL: (state: ModuleState, data: any) => {
+                state.data.data = data;
+            },
         };
     }
 
@@ -29,6 +33,10 @@ export default class ModelModule extends BaseModule {
 
             setId({ commit }, id) {
                 commit('SET_ID', id);
+            },
+
+            setModel({ commit }, model: any) {
+                commit('SET_MODEL', model);
             },
         };
     }
