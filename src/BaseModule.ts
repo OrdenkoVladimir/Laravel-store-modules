@@ -4,7 +4,7 @@ import {
 } from 'vuex';
 
 // @ts-ignore
-const request = typeof window.request === 'object' && typeof window.request.getInstance === 'function'
+const request = typeof window.request === 'function' && typeof window.request.getInstance === 'function'
     // @ts-ignore
     ? window.request.getInstance()
     : Request.getInstance();
