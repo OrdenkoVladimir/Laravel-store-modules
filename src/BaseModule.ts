@@ -3,7 +3,11 @@ import {
     ActionContext, ActionTree, GetterTree, MutationTree,
 } from 'vuex';
 
-const request = Request.getInstance();
+// @ts-ignore
+const request = typeof window.request === 'object' && typeof window.request.getInstance === 'function'
+    // @ts-ignore
+    ? window.request.getInstance()
+    : Request.getInstance();
 
 export interface StateParams {
     [key: string]: any,
@@ -53,6 +57,7 @@ export default class BaseModule {
                 commit('SET_LOADING', true);
 
                 await request.get(getters.endpoint, { params: state.params })
+                    // @ts-ignore
                     .then((response) => {
                         if (!Object.prototype.hasOwnProperty.call(state.params, 'page')) {
                             commit('SET_DATA', response.data);
