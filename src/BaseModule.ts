@@ -6,8 +6,8 @@ import {
 // @ts-ignore
 const request = typeof window.request === 'function' && typeof window.request.getInstance === 'function'
     // @ts-ignore
-    ? window.request.getInstance()
-    : Request.getInstance();
+    ? window.request
+    : Request;
 
 export interface StateParams {
     [key: string]: any,
@@ -56,7 +56,7 @@ export default class BaseModule {
             async get({ state, commit, getters }: ActionContext<ModuleState, any>) {
                 commit('SET_LOADING', true);
 
-                await request.get(getters.endpoint, { params: state.params })
+                await request.getInstance().get(getters.endpoint, { params: state.params })
                     // @ts-ignore
                     .then((response) => {
                         if (!Object.prototype.hasOwnProperty.call(state.params, 'page')) {
@@ -72,7 +72,7 @@ export default class BaseModule {
             },
 
             async remove({ state }: ActionContext<ModuleState, any>, url) {
-                await request.delete(url, { params: state.params });
+                await request.getInstance().delete(url, { params: state.params });
             },
 
             setParams: ({ commit }: ActionContext<ModuleState, any>, params) => {

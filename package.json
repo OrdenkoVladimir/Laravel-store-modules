@@ -1,6 +1,6 @@
 {
   "name": "laravel-store-modules",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Base Vuex module classes to work with Laravel.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
