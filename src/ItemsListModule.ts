@@ -15,7 +15,10 @@ interface Order {
 }
 
 export default class ItemsListModule extends BaseModule {
-    constructor(endpoint: string, stateParams: StateParams = {}) {
+    constructor(
+        endpoint: string,
+        stateParams: StateParams = { hasCache: false, cacheDuration: 3600 },
+    ) {
         super(endpoint, {
             ...stateParams,
             order: {},

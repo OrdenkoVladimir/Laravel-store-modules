@@ -9,7 +9,33 @@ const request = typeof window.request === 'function' && typeof window.request.ge
     ? window.request
     : Request;
 
+const getDataFromLocalStorage = (key: string) => {
+    const data: string | null = localStorage.getItem(key);
+    if (data === null) {
+        return null;
+    }
+
+    const parsedData: { expireAt: Number, data: { [key: string]: any } } = JSON.parse(data);
+    const cacheExpired: boolean = new Date().getTime() > parsedData.expireAt;
+
+    if (cacheExpired) {
+        localStorage.removeItem(key);
+        return null;
+    }
+
+    return parsedData.data;
+};
+
+const setDataToLocalStorage = (key: string, data: any, cacheDuration: number) => {
+    localStorage.setItem(key, JSON.stringify({
+        expireAt: new Date().getTime() + cacheDuration * 1000,
+        data,
+    }));
+};
+
 export interface StateParams {
+    hasCache: boolean,
+    cacheDuration: number,
     [key: string]: any,
 }
 
@@ -18,6 +44,8 @@ export interface ModuleState {
     loading: boolean,
     data: { data?: any, [key: string]: any },
     initiallyLoaded: boolean,
+    hasCache: boolean,
+    cacheDuration: number,
     [key: string]: any,
 }
 
@@ -26,7 +54,10 @@ export default class BaseModule {
 
     private readonly defaultState: () => ModuleState;
 
-    constructor(endpoint: string, stateParams: StateParams = {}) {
+    constructor(
+        endpoint: string,
+        stateParams: StateParams = { hasCache: false, cacheDuration: 3600 },
+    ) {
         this.endpoint = endpoint;
         this.defaultState = () => ({
             ...stateParams,
@@ -48,6 +79,8 @@ export default class BaseModule {
             loading: (state: ModuleState) => state.loading,
             initiallyLoaded: (state: ModuleState) => state.initiallyLoaded,
             endpoint: (state: ModuleState) => state.endpoint,
+            hasCache: (state: ModuleState) => state.hasCache,
+            cacheDuration: (state: ModuleState) => state.cacheDuration,
         };
     }
 
@@ -56,19 +89,31 @@ export default class BaseModule {
             async get({ state, commit, getters }: ActionContext<ModuleState, any>) {
                 commit('SET_LOADING', true);
 
-                await request.getInstance().get(getters.endpoint, { params: state.params })
-                    // @ts-ignore
-                    .then((response) => {
-                        if (!Object.prototype.hasOwnProperty.call(state.params, 'page')) {
-                            commit('SET_DATA', response.data);
-                        } else {
-                            commit('APPEND_DATA', response.data);
-                        }
-                    })
-                    .finally(() => {
-                        commit('SET_INITIALLY_LOADED', true);
-                        commit('SET_LOADING', false);
-                    });
+                let data = null;
+                if (getters.hasCache) {
+                    data = getDataFromLocalStorage(getters.endpoint);
+                }
+
+                if (data === null) {
+                    const response = await request.getInstance()
+                        .get(getters.endpoint, { params: state.params })
+                        .catch(() => {});
+
+                    data = response.data;
+
+                    if (getters.hasCache) {
+                        setDataToLocalStorage(getters.endpoint, data, getters.cacheDuration);
+                    }
+                }
+
+                if (!Object.prototype.hasOwnProperty.call(state.params, 'page')) {
+                    commit('SET_DATA', data);
+                } else {
+                    commit('APPEND_DATA', data);
+                }
+
+                commit('SET_INITIALLY_LOADED', true);
+                commit('SET_LOADING', false);
             },
 
             async remove({ state }: ActionContext<ModuleState, any>, url) {
