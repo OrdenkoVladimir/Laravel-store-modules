@@ -97,7 +97,7 @@ export default class BaseModule {
                 if (data === null) {
                     const response = await request.getInstance()
                         .get(getters.endpoint, { params: state.params })
-                        .catch(() => {});
+                        .catch(() => ({}));
 
                     data = response.data;
 
