@@ -99,7 +99,7 @@ export default class BaseModule {
                         .get(getters.endpoint, { params: state.params })
                         .catch(() => ({}));
 
-                    data = response.data;
+                    data = response.data ?? {};
 
                     if (getters.hasCache) {
                         setDataToLocalStorage(getters.endpoint, data, getters.cacheDuration);
